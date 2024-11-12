@@ -1,56 +1,49 @@
-# SNPE_Yolov5_Model_Conversion
+# SNPE_Model_Conversion
 
 ## Prerequisites
 * OS: Ubuntu 22.04
 * SNPE SDK: v2.22.6.240515
-* Model: YOLOv5s.pt
+* Supported Model: YOLOV8, YOLOV11, DETR-Resnet101
 
 ## SNPE SDK Installation
 [SNPE SDK](https://www.qualcomm.com/developer/software/neural-processing-sdk-for-ai)
 
 [ANDROID NDK](https://dl.google.com/android/repository/android-ndk-r26c-linux.zip)
 
-## Install YOLOv5 Repo
+## Model Repo
 ```
-git clone https://github.com/ultralytics/yolov5.git
-```
-
-## Environment Setup
-```
-conda create -n yolov5 python=3.10
-conda activate yolov5
-cd yolov5
-pip install -r requirements.txt
+[YOLOV8](https://docs.ultralytics.com/models/yolov8/)
+[YOLOV11](https://docs.ultralytics.com/models/yolo11/)
+[DETR-Resnet101](https://aihub.qualcomm.com/models/detr_resnet101)
 ```
 
-## Convert to ONNX Model
-```
-cd yolov5
-python export.py --weights yolov5s.pt --include torchscript onnx
-```
+## File Tree
+Documents
+L---> v2.22.6.240515
+L---> android-ndk-r26c-linux
 
 ## Setup SNPE Environment and Convert ONNX Model to DLC
-### SNPE Environment
+1. Set Up SNPE Environment
 ```
 conda create --name snpe python=3.10
 conda activate snpe
-export SNPE_ROOT=/home/inventec/Documents/Qualcomm/model_conversion/v2.22.6.240515/qairt/2.22.6.240515
+export SNPE_ROOT=/home/inventec/Documents/v2.22.6.240515/qairt/2.22.6.240515
 ${SNPE_ROOT}/bin/check-python-dependency
 sudo bash ${SNPE_ROOT}/bin/check-linux-dependency.sh
 sudo apt-get install make
 ```
-### Android NDK
+2. Set Up Android NDK
 ```
-export ANDROID_NDK_ROOT=/home/inventec/Documents/Qualcomm/model_conversion/android-ndk-r26c-linux/android-ndk-r26c
+export ANDROID_NDK_ROOT=/home/inventec/Documents/android-ndk-r26c-linux/android-ndk-r26c
 export PATH=${ANDROID_NDK_ROOT}:${PATH}
 ```
 
-### Environment Check
+3. Check Environment
 ```
 ${SNPE_ROOT}/bin/envcheck -c
 ```
 
-### ONNX Installation
+4. Install ONNX and ONNX Runtime
 ```
 pip install onnx==1.12.0
 pip install onnxruntime==1.17.1
@@ -64,16 +57,62 @@ Reference:
 source ${SNPE_ROOT}/bin/envsetup.sh
 ```
 
-### Model Conversion
+### YOLOV8 Model Conversion
+1. Create the activation encoding file (act.encodings) with following content:
 ```
-snpe-onnx-to-dlc --input_network models/yolov5s.onnx --output_path dlc/yolov5s.dlc
+{
+    "activation_encodings": {
+        "/model.22/Sigmoid_output_0": [
+            {
+                "bitwidth": 16,
+                "dtype": "int",
+                "max": 0.996093750000,
+                "min": 0.0,
+                "offset": 0,
+                "scale": 0.00001519941634
+            }
+        ],
+        "output0": [
+            {
+                "bitwidth": 16,
+                "dtype": "int",
+                "is_symmetric": "False",
+                "max": 643.878662109375,
+                "min": 0.0,
+                "offset": 0,
+                "scale": 0.00982495860394255
+            }
+        ]
+    },
+    "param_encodings": {
+    
+    }
+}
+```
+2. Convert ONNX to DLC
+```
+snpe-onnx-to-dlc --input_network models/yolov5s.onnx --quantization_overrides act.encodings --output_path dlc/yolov5s.dlc
 ```
 
-### Model Quantization
+3. Model Quantization
+* Prepare dataset for quantization
 ```
 python ${SNPE_ROOT}/examples/Models/InceptionV3/scripts/create_inceptionv3_raws.py -s 640 -i model_quantization/test_img/ -d model_quantization/output_pictures_640
 python ${SNPE_ROOT}/examples/Models/InceptionV3/scripts/create_file_list.py -i model_quantization/output_pictures_640 -o model_quantization/image_file_list.txt -e '*.raw'
-snpe-dlc-quantize --input_dlc dlc/yolov5s.dlc --input_list model_quantization/image_file_list.txt --output_dlc dlc/yolov5s_quantized.dlc
+snpe-dlc-quantize --input_dlc yolov8.dlc --override_params --input_list model_quantization/image_file_list.txt --output_dlc dlc/yolov8_quantized.dlc
+```
+
+### DETR-Resnet101 Model Conversion
+1. Convert ONNX to DLC
+```
+snpe-onnx-to-dlc --input_network models/detr-resnet101.onnx --output_path dlc/detr-resnet101.dlc
+```
+2. Model Quantization
+* Prepare dataset for quantization
+```
+python ${SNPE_ROOT}/examples/Models/InceptionV3/scripts/create_inceptionv3_raws.py -s 480 -i model_quantization/test_img/ -d model_quantization/output_pictures_480
+python ${SNPE_ROOT}/examples/Models/InceptionV3/scripts/create_file_list.py -i model_quantization/output_pictures_480 -o model_quantization/image_file_list.txt -e '*.raw'
+snpe-dlc-quantize --input_dlc detr-resnet101.dlc --override_params --input_list model_quantization/image_file_list.txt --output_dlc dlc/detr-resnet101_quantized.dlc
 ```
 
 ## Model Visualization
