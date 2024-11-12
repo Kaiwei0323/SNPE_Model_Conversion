@@ -16,9 +16,11 @@
 [DETR-Resnet101](https://aihub.qualcomm.com/models/detr_resnet101)
 
 ## File Tree
+```
 Documents
 L---> v2.22.6.240515
 L---> android-ndk-r26c-linux
+```
 
 ## Setup SNPE Environment and Convert ONNX Model to DLC
 1. Set Up SNPE Environment
@@ -149,3 +151,6 @@ Output Tensors:
 ```
     output0
 ```
+
+### Reference
+* https://docs.qualcomm.com/bundle/publicresource/topics/80-63442-2/model_conv_onnx.html
