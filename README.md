@@ -12,7 +12,9 @@
 
 ## Model Repo
 [YOLOV8](https://docs.ultralytics.com/models/yolov8/)
+
 [YOLOV11](https://docs.ultralytics.com/models/yolo11/)
+
 [DETR-Resnet101](https://aihub.qualcomm.com/models/detr_resnet101)
 
 ## File Tree
