@@ -114,7 +114,7 @@ snpe-onnx-to-dlc --input_network models/detr-resnet101.onnx --output_path dlc/de
 ```
 python ${SNPE_ROOT}/examples/Models/InceptionV3/scripts/create_inceptionv3_raws.py -s 480 -i model_quantization/test_img/ -d model_quantization/output_pictures_480
 python ${SNPE_ROOT}/examples/Models/InceptionV3/scripts/create_file_list.py -i model_quantization/output_pictures_480 -o model_quantization/image_file_list.txt -e '*.raw'
-snpe-dlc-quantize --input_dlc detr-resnet101.dlc --override_params --input_list model_quantization/image_file_list.txt --output_dlc dlc/detr-resnet101_quantized.dlc
+snpe-dlc-quantize --input_dlc detr-resnet101.dlc --input_list model_quantization/image_file_list.txt --output_dlc dlc/detr-resnet101_quantized.dlc
 ```
 
 ## Model Visualization
