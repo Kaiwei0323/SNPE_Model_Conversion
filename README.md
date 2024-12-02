@@ -93,7 +93,7 @@ source ${SNPE_ROOT}/bin/envsetup.sh
 ```
 2. Convert ONNX to DLC
 ```
-snpe-onnx-to-dlc --input_network models/yolov5s.onnx --quantization_overrides act.encodings --output_path dlc/yolov5s.dlc
+snpe-onnx-to-dlc --input_network models/yolov8s.onnx --quantization_overrides act.encodings --output_path dlc/yolov8s.dlc
 ```
 
 3. Model Quantization
@@ -101,7 +101,7 @@ snpe-onnx-to-dlc --input_network models/yolov5s.onnx --quantization_overrides ac
 ```
 python ${SNPE_ROOT}/examples/Models/InceptionV3/scripts/create_inceptionv3_raws.py -s 640 -i model_quantization/test_img/ -d model_quantization/output_pictures_640
 python ${SNPE_ROOT}/examples/Models/InceptionV3/scripts/create_file_list.py -i model_quantization/output_pictures_640 -o model_quantization/image_file_list.txt -e '*.raw'
-snpe-dlc-quantize --input_dlc yolov8.dlc --override_params --input_list model_quantization/image_file_list.txt --output_dlc dlc/yolov8_quantized.dlc
+snpe-dlc-quantize --input_dlc dlc/yolov8s.dlc --override_params --input_list model_quantization/image_file_list.txt --output_dlc dlc/yolov8s_quantized.dlc
 ```
 
 ### DETR-Resnet101 Model Conversion
