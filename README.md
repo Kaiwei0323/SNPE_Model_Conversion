@@ -119,7 +119,7 @@ snpe-dlc-quantize --input_dlc detr-resnet101.dlc --input_list model_quantization
 
 ## Model Visualization
 ```
-snpe-dlc-info -i dlc/yolov5s_quantized.dlc
+snpe-dlc-info -i dlc/detr-resnet101_quantized.dlc
 ```
 
 ## Model Analysis
